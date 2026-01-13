@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tic Tac Toe</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            margin-top: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .cell {
+            width: 100px;
+            height: 100px;
+            font-size: 40px;
+            cursor: pointer;
+            border: 2px solid black;
+            background-color: white;
+        }
+
+        .cell:hover {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Tic Tac Toe</h1>
+<h2 id="status">Player X's turn</h2>
+
+<div class="board">
+    <button class="cell" onclick="makeMove(0)"></button>
+    <button class="cell" onclick="makeMove(1)"></button>
+    <button class="cell" onclick="makeMove(2)"></button>
+    <button class="cell" onclick="makeMove(3)"></button>
+    <button class="cell" onclick="makeMove(4)"></button>
+    <button class="cell" onclick="makeMove(5)"></button>
+    <button class="cell" onclick="makeMove(6)"></button>
+    <button class="cell" onclick="makeMove(7)"></button>
+    <button class="cell" onclick="makeMove(8)"></button>
+</div>
+
+<button onclick="resetGame()">Restart Game</button>
+
+<script>
+    let board = ["", "", "", "", "", "", "", "", ""];
+    let currentPlayer = "X";
+    let gameOver = false;
+
+    function makeMove(index) {
+        if (board[index] === "" && !gameOver) {
+            board[index] = currentPlayer;
+            document.getElementsByClassName("cell")[index].innerText = currentPlayer;
+
+            if (checkWin()) {
+                document.getElementById("status").innerText = "Player " + currentPlayer + " wins!";
+                gameOver = true;
+            } else if (board.includes("") === false) {
+                document.getElementById("status").innerText = "It's a draw!";
+                gameOver = true;
+            } else {
+                currentPlayer = currentPlayer === "X" ? "O" : "X";
+                document.getElementById("status").innerText = "Player " + currentPlayer + "'s turn";
+            }
+        }
+    }
+
+    function checkWin() {
+        const wins = [
+            [0,1,2], [3,4,5], [6,7,8],
+            [0,3,6], [1,4,7], [2,5,8],
+            [0,4,8], [2,4,6]
+        ];
+
+        return wins.some(combo => {
+            return combo.every(index => board[index] === currentPlayer);
+        });
+    }
+
+    function resetGame() {
+        board = ["", "", "", "", "", "", "", "", ""];
+        gameOver = false;
+        currentPlayer = "X";
+        document.getElementById("status").innerText = "Player X's turn";
+
+        let cells = document.getElementsByClassName("cell");
+        for (let i = 0; i < cells.length; i++) {
+            cells[i].innerText = "";
+        }
+    }
+</script>
+
+</body>
+</html>
