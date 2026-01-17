@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Eco+ Calculator & Bill Generator</title>
+
+<style>
+:root{
+  --bg:#0b1a12;
+  --card:#12291c;
+  --btn:#1b3a28;
+  --accent:#4caf50;
+  --text:#dff5ea;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:system-ui;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
+
+.container{
+  width:720px;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+
+h2{
+  text-align:center;
+  color:var(--accent);
+}
+
+#display{
+  width:100%;
+  height:45px;
+  background:black;
+  color:#0f0;
+  font-size:20px;
+  text-align:right;
+  padding:5px;
+  border:none;
+}
+
+.buttons{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+
+button{
+  height:40px;
+  background:var(--btn);
+  color:var(--text);
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+.equal{background:var(--accent); color:black;}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:10px;
+}
+
+th,td{
+  border:1px solid #2e5c44;
+  padding:6px;
+  text-align:center;
+}
+
+input{
+  width:100%;
+  background:black;
+  color:#0f0;
+  border:none;
+}
+
+.total{
+  text-align:right;
+  margin-top:10px;
+  font-size:18px;
+  color:var(--accent);
+}
+
+.eco-bar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:10px;
+  font-size:14px;
+}
+
+.low-power{
+  filter:brightness(0.85);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="app">
+
+<div class="eco-bar">
+  <span>🌱 Eco Mode Status: <b id="ecoStatus">NORMAL</b></span>
+  <button onclick="toggleEco()">⚡ Battery Saver</button>
+</div>
+
+<h2>🧮 Scientific Calculator</h2>
+<input id="display" disabled>
+
+<div class="buttons">
+  <button onclick="clr()">C</button>
+  <button onclick="add('(')">(</button>
+  <button onclick="add(')')">)</button>
+  <button onclick="add('%')">%</button>
+  <button onclick="add('/')">÷</button>
+
+  <button onclick="add('7')">7</button>
+  <button onclick="add('8')">8</button>
+  <button onclick="add('9')">9</button>
+  <button onclick="add('*')">×</button>
+  <button onclick="sqrt()">√</button>
+
+  <button onclick="add('4')">4</button>
+  <button onclick="add('5')">5</button>
+  <button onclick="add('6')">6</button>
+  <button onclick="add('-')">−</button>
+  <button onclick="square()">x²</button>
+
+  <button onclick="add('1')">1</button>
+  <button onclick="add('2')">2</button>
+  <button onclick="add('3')">3</button>
+  <button onclick="add('+')">+</button>
+  <button onclick="log()">log</button>
+
+  <button onclick="add('0')">0</button>
+  <button onclick="add('.')">.</button>
+  <button onclick="sin()">sin</button>
+  <button onclick="cos()">cos</button>
+  <button onclick="tan()">tan</button>
+
+  <button class="equal" style="grid-column:span 5" onclick="calc()">=</button>
+</div>
+
+<hr>
+
+<h2>🧾 Paper-Saving Bill Generator</h2>
+
+<table id="bill">
+<tr><th>Item</th><th>Qty</th><th>Price</th><th>Total</th></tr>
+</table>
+
+<button onclick="addItem()">➕ Add Item</button>
+
+<div class="total">
+  Grand Total: ₹ <span id="grand">0</span>
+</div>
+
+<p style="text-align:center;font-size:12px;color:#9be7b2">
+🌍 Offline • Dark UI • Low CPU • No network usage
+</p>
+
+</div>
+
+<script>
+const d=document.getElementById("display");
+const app=document.getElementById("app");
+let eco=false;
+
+function toggleEco(){
+  eco=!eco;
+  app.classList.toggle("low-power");
+  document.getElementById("ecoStatus").innerText=eco?"LOW POWER":"NORMAL";
+}
+
+function add(v){ d.value+=v; }
+function clr(){ d.value=""; }
+function calc(){ try{ d.value=eval(d.value); }catch{ d.value="Err"; } }
+
+function sqrt(){ d.value=Math.sqrt(d.value); }
+function square(){ d.value=Math.pow(d.value,2); }
+function log(){ d.value=Math.log10(d.value); }
+function sin(){ d.value=Math.sin(d.value); }
+function cos(){ d.value=Math.cos(d.value); }
+function tan(){ d.value=Math.tan(d.value); }
+
+/* Bill */
+function addItem(){
+  let t=document.getElementById("bill");
+  let r=t.insertRow();
+  r.innerHTML=`
+    <td><input></td>
+    <td><input type="number" value="1" oninput="billCalc()"></td>
+    <td><input type="number" value="0" oninput="billCalc()"></td>
+    <td class="it">0</td>`;
+}
+
+function billCalc(){
+  let t=document.getElementById("bill"), g=0;
+  for(let i=1;i<t.rows.length;i++){
+    let q=t.rows[i].cells[1].children[0].value;
+    let p=t.rows[i].cells[2].children[0].value;
+    let tot=q*p;
+    t.rows[i].cells[3].innerText=tot;
+    g+=tot;
+  }
+  document.getElementById("grand").innerText=g;
+}
+</script>
+
+</body>
+</html>
+
